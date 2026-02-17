@@ -1,8 +1,9 @@
 using UnityEngine;
 
-namespace StormPig {
+
+namespace StormPig.Player {
     public class PlayerInput : MonoBehaviour {
+        
 
     }
 }
-
