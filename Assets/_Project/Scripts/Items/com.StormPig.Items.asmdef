@@ -1,0 +1,16 @@
+{
+    "name": "com.StormPig.Items",
+    "rootNamespace": "",
+    "references": [
+        "GUID:8e6aa296308a9b74dbc4f122ff5a63cb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

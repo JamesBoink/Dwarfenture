@@ -1,0 +1,19 @@
+{
+    "name": "com.StormPig.Crafting",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f6fe36e36fee015438604d1f34fddefc",
+        "GUID:55548638e82da2b4f911895fc59bf699",
+        "GUID:8e6aa296308a9b74dbc4f122ff5a63cb",
+        "GUID:fc69993c35d597445882563e87a51136"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
