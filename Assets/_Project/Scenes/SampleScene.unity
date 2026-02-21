@@ -497,11 +497,9 @@ MonoBehaviour:
       <TargetMoveSpeed>k__BackingField: 5
       <TargetRunSpeed>k__BackingField: 8
       <TargetSprintSpeed>k__BackingField: 12
-      <MoveSpeed>k__BackingField: 0
-      <MoveSpeedAcceleration>k__BackingField: 200
       <RunMultiplier>k__BackingField: 1.5
       <SprintMultiplier>k__BackingField: 2.1
-      <Gravity>k__BackingField: -9.81
+      <Gravity>k__BackingField: -1
       <JumpForce>k__BackingField: 8000
       <AttackMoveDebuff>k__BackingField: -0.33
       <CamOffset>k__BackingField: {x: 0, y: 1, z: -5}
@@ -513,7 +511,6 @@ MonoBehaviour:
     _grounded: 0
     _currentMoveSpeed: 0
     _currentJumpForce: 0
-    _currentVelocity: {x: 0, y: 0, z: 0}
     _rbVelocity: {x: 0, y: 0, z: 0}
   _debugBoxCast: 1
 --- !u!54 &704792695

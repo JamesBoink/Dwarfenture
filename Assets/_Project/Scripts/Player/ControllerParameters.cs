@@ -6,7 +6,6 @@ namespace StormPig.Player {
         [field: SerializeField] public float TargetMoveSpeed { get; private set; }
         [field: SerializeField] public float TargetRunSpeed { get; private set; }
         [field: SerializeField] public float TargetSprintSpeed { get; private set; }
-        [field: SerializeField] public float MoveSpeedAcceleration { get; private set; }
         [field: SerializeField] public float RunMultiplier { get; private set; }
         [field: SerializeField] public float SprintMultiplier { get; private set; }
         [field: SerializeField] public float Gravity { get; private set; }

@@ -27,9 +27,10 @@ namespace StormPig.Player {
 
         public void JumpInput(InputAction.CallbackContext context) {
             if (context.ReadValue<float>() > 0.1f) {
-                IsJumping = true;
+                _pP.Jump();
+                //IsJumping = true;
             } else {
-                IsJumping = false;
+               // IsJumping = false;
             }
         }
 
