@@ -231,8 +231,8 @@ namespace StormPig.UI {
                 for (int i = 0; i < texts.Length; i++) {
                     texts[i].text = "";
                 }
-                currentHoveredOnItem = null;
-                infoIcon.sprite = null;
+                currentHoveredOnItem = null;                
+                //infoIcon.sprite = null;
                 return;
             }
  
@@ -240,7 +240,7 @@ namespace StormPig.UI {
             for(int i =0; i < info.Length; i++) {
                 texts[i].text = info[i];
             }
-            infoIcon.sprite = currentHoveredOnItem.Icon.sprite;
+          //  infoIcon.sprite = currentHoveredOnItem.Icon.sprite;
         }
     }
 }
