@@ -162,24 +162,39 @@ namespace StormPig.Inventory {
                     // or also add additional info at the end of array
                     string[] info;
                     if (Items[i].Data.AdditionalParameters == null) {
-                        info = new string[4];
+                        info = new string[5];
                     } else {
-                        info = new string[4 + (Items[i].Data.AdditionalParameters.Length*2)];
-                        
-                        int currentIndex = 3;
+                        info = new string[5 + (Items[i].Data.AdditionalParameters.Length*2)];
+                        int currentIndex = 5;
                         for(int x =0; x < Items[i].Data.AdditionalParameters.Length; x++) {
                             info[currentIndex] = Items[i].Data.AdditionalParameters[x].Type.ToString();
-                            info[currentIndex++] = Items[i].Data.AdditionalParameters[x].Value.ToString();
+                            currentIndex++;
+                            info[currentIndex] = Items[i].Data.AdditionalParameters[x].Value.ToString();
                             currentIndex++;
                         }
                     }
                     info[0] = Items[i].Data.Name;
                     info[1] = Items[i].Data.Description;
-                    info[2] = Items[i].Data.Type.ToString();
-                    info[3] = Items[i].Data.Quality.ToString();
+
+                    //if item is singular just display its weight
+                    if(Items[i].Data.MaxStack == 1) {
+                        info[2] = Items[i].Data.Weight + " kg";
+                    } else {
+                        //if not find the stack and display total stack weight
+                        for(int j =0; j < stacks.Count; j++) {
+                            if (stacks[j].Original == Items[i]) {
+                                float totalWeight = Items[i].Data.Weight * stacks[j].Ammount;
+                                info[2] = totalWeight + " kg";
+                                break;
+                            }
+                        }                        
+                    }
+                   
+                    info[3] = Items[i].Data.Type.ToString();
+                    info[4] = Items[i].Data.Quality.ToString();
 
                     Global.Log.Trace("Sending info to UI about: <color=green>" + Items[i].Data.name + "</color>  from inventory:  " + name);
-                    Global.Log.Warning("Carfull, hardcoded values in this method. We assume 4 base informations, might be less or more right now");
+                    Global.Log.Warning("Carfull, hardcoded values in this method. We assume 5 base informations, might be less or more right now");
                     return info;
                 }
             }

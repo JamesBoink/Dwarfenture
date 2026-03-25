@@ -6,26 +6,36 @@ using System.Collections.Generic;
 
 namespace StormPig.UI {
     public class InventoryUI : MonoBehaviour {
-        // [SerializeField] private GridLayoutGroup group;
+        [Header("Functionality")]
+        [SerializeField] private HoverPanel _hoverPanel;
         [SerializeField] private GraphicRaycaster raycaster;
         [SerializeField] private EventSystem eventSystem;
+        [Space(5)]
+
+        [Header("Inventory")]
         [SerializeField] private Inventory.Inventory inv;
+        [SerializeField] private Transform itemContainter;
+        [Space(2)]
         [SerializeField] private Image[] cellImages;
         [SerializeField] private InventoryCell[] cells;
         [SerializeField] private ItemUI[] itemPrefabs;
-        [SerializeField] private Transform itemContainter;
+        [Space(5)]
+
+        [Header("Parameters")]
         [SerializeField] private Color freeSpaceColor;
         [SerializeField] private Color takenSpaceColor;
+        [Space(2)]
         [SerializeField] private int gridX;
         [SerializeField] private int gridY;
-        [SerializeField] private TextMeshProUGUI[] texts;
-        [SerializeField] private Image infoIcon;
+        [Space(2)]
+        [SerializeField] private float _hoverXOffset;
+        [SerializeField] private float _hoverYOffset;
 
         private List<ItemUI> items = new List<ItemUI>();
         private readonly List<RaycastResult> itemHits = new();
 
         private ItemUI currentMovingItem = null;
-        [SerializeField] private ItemUI currentHoveredOnItem = null;
+        private ItemUI currentHoveredOnItem = null;
         private ItemUI previewInstance = null;
 
         private Vector3 lastItemPosition;
@@ -106,6 +116,9 @@ namespace StormPig.UI {
                     previewInstance.Rect.anchorMax = previewInstance.Rect.anchorMin;
                     previewInstance.Rect.anchoredPosition = currentMovingItem.Rect.anchoredPosition;
                     Global.Log.Trace("Clicked on an ItemUI: " + currentMovingItem.name);
+                    if (_hoverPanel.gameObject.activeInHierarchy) {
+                        _hoverPanel.gameObject.SetActive(false);
+                    }
                     break;
                 }
             }
@@ -155,6 +168,9 @@ namespace StormPig.UI {
             currentMovingItem.Rect.position = previewInstance.Rect.position;
 
             Destroy(previewInstance.gameObject);
+
+            // After placing item, to make sure info is still there
+            DisplayHoverPanel();
         }
 
         private void VisualiseItem(Vector2Int[] positions, Sprite sprite, int ammount) {
@@ -177,7 +193,7 @@ namespace StormPig.UI {
             if (positions.Length == 1) {
                 last = first;
             }
-            Global.Log.Trace("Weird positions maybe? First: " + first + "  and last: " + last);
+            Global.Log.Trace("Positions - first: " + first + "  and last: " + last);
 
             newItem.Rect.position = (cellImages[first].rectTransform.position + cellImages[last].rectTransform.position) / 2f;
             newItem.GridPositions = positions;
@@ -204,6 +220,9 @@ namespace StormPig.UI {
             }
         }
 
+        /// <summary>
+        /// Displays item information to hover panel
+        /// </summary>
         private void DisplayInfo() {
             if (!EventSystem.current.IsPointerOverGameObject()) { return; }
 
@@ -213,6 +232,9 @@ namespace StormPig.UI {
 
             raycaster.Raycast(data, itemHits);
 
+            // below try to get item ui
+            // if none is found return,
+            // if we already got it return to save stuff
             ItemUI check = null;
             for (int i = 0; i < itemHits.Count; i++) {
                 if(itemHits[i].gameObject.TryGetComponent(out ItemUI it)){
@@ -228,19 +250,22 @@ namespace StormPig.UI {
             itemHits.Clear();
 
             if (check == null) {               
-                for (int i = 0; i < texts.Length; i++) {
-                    texts[i].text = "";
-                }
-                currentHoveredOnItem = null;                
-                //infoIcon.sprite = null;
+                currentHoveredOnItem = null;
+                _hoverPanel.gameObject.SetActive(false);
                 return;
             }
- 
-            string[] info = inv.GetItemInfo(currentHoveredOnItem.GridPositions);
-            for(int i =0; i < info.Length; i++) {
-                texts[i].text = info[i];
-            }
-          //  infoIcon.sprite = currentHoveredOnItem.Icon.sprite;
+            DisplayHoverPanel();
+        }
+
+        private void DisplayHoverPanel() {
+            _hoverPanel.gameObject.SetActive(true);
+
+            _hoverPanel.Rect.position = new Vector3(
+               currentHoveredOnItem.Rect.position.x - (currentHoveredOnItem.Rect.sizeDelta.x + _hoverPanel.Rect.sizeDelta.x / 2f + _hoverXOffset),
+               currentHoveredOnItem.Rect.position.y - (_hoverPanel.Rect.sizeDelta.y / 2f + _hoverYOffset),
+               currentHoveredOnItem.Rect.position.z);
+
+            _hoverPanel.DisplayInfo(inv.GetItemInfo(currentHoveredOnItem.GridPositions), currentHoveredOnItem.Icon.sprite);
         }
     }
 }

@@ -4,13 +4,11 @@ namespace StormPig.Inventory {
     public class TEMPInvTest : MonoBehaviour {
         [SerializeField] private Inventory inv;
         [SerializeField] private Items.Item[] its;
-     //   [SerializeField] private Resources.ResourceNode r;
         [ContextMenu("Add")]
         public void Add() {
-            //Resources.Resource r = new Resources.Resource();
-            //r.Data = this.r.resource.Data;
-            //r.ResourceData = this.r.resource.ResourceData;
-            //inv.TryAddItem(r);
+            Items.Item i = new Items.Item();
+            i.Data = its[0].Data;
+            inv.TryAddItem(i, 1);
         }
 
         [ContextMenu("Delete")]
