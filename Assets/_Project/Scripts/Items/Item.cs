@@ -5,5 +5,9 @@ namespace StormPig.Items {
     public class Item  {
         [SerializeField] public ItemData Data;
         [SerializeField] public Vector2Int[] InventoryPosition;
+        
+        public Item(ItemData d) {
+            Data = d;
+        }
     }
 }

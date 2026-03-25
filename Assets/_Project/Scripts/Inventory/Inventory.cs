@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using StormPig.Items;
 
-namespace StormPig.Inventory {
+namespace StormPig.Inventories {
     public class Inventory : MonoBehaviour {
         private bool[][] SpaceTaken;
 
@@ -223,8 +223,7 @@ namespace StormPig.Inventory {
             }
             for (int i = 0; i < stacks.Count; i++) {
                 if (stacks[i].Original == item) {
-                    Item newItem = new Item();
-                    newItem.Data = item.Data;
+                    Item newItem = new Item(item.Data);
                     newItem.InventoryPosition = newPosition;
 
                     Items.Add(newItem);

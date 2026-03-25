@@ -6,6 +6,7 @@ namespace StormPig.Player {
         [SerializeField] private Camera _cam;
         [SerializeField] private PlayerPhysics _pP;
         [SerializeField] private bool _debugBoxCast;
+        [SerializeField] private GameObject _pickup;
         public Vector2 InputVector { get; private set; }
         public bool IsJumping { get; private set; }
 
@@ -42,7 +43,17 @@ namespace StormPig.Player {
                 InputVector = Vector2.zero;
                 _pP.StopMoving();
             }
-        ;
+        }
+
+        public void Pickup(InputAction.CallbackContext context) {
+            if (context.ReadValue<float>() > 0.1f) {
+                _pickup.SetActive(true);
+                DG.Tweening.DOVirtual.DelayedCall(0.2f, DeactivateBox);
+            } 
+        }
+
+        private void DeactivateBox() {
+            _pickup.SetActive(false);
         }
     }
 }

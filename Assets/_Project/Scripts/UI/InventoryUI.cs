@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using TMPro;
 using System.Collections.Generic;
 
 namespace StormPig.UI {
@@ -13,7 +12,7 @@ namespace StormPig.UI {
         [Space(5)]
 
         [Header("Inventory")]
-        [SerializeField] private Inventory.Inventory inv;
+        [SerializeField] private Inventories.Inventory inv;
         [SerializeField] private Transform itemContainter;
         [Space(2)]
         [SerializeField] private Image[] cellImages;
