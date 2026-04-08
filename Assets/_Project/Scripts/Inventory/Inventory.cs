@@ -207,7 +207,7 @@ namespace StormPig.Inventories {
                     return info;
                 }
             }
-            Global.Log.Critical("The item cannot be found in inventory: " + name + ". Something deleted the item without a cleanup and it persits in UI!");
+            Global.Log.Critical("The item cannot be found in inventory: " + name + " At position: " + positions[0].x + "," + positions[0].y + ". Something deleted the item without a cleanup and it persits in UI!");
             return null;
         }
 

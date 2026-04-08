@@ -17,7 +17,8 @@ namespace StormPig.UI {
         [Space(2)]
         [SerializeField] private Image[] cellImages;
         [SerializeField] private InventoryCell[] cells;
-        [SerializeField] private ItemUI[] itemPrefabs;
+        [SerializeField] private ItemUI[] itemPrefabs; 
+        [SerializeField] private ItemUI[] itemPreviewPrefabs;
         [Space(5)]
 
         [Header("Parameters")]
@@ -33,9 +34,9 @@ namespace StormPig.UI {
         private List<ItemUI> items = new List<ItemUI>();
         private readonly List<RaycastResult> itemHits = new();
 
-        private ItemUI currentMovingItem = null;
-        private ItemUI currentHoveredOnItem = null;
-        private ItemUI previewInstance = null;
+         private ItemUI currentMovingItem = null;
+         private ItemUI currentHoveredOnItem = null;
+         private ItemUI previewInstance = null;
 
         private Vector3 lastItemPosition;
 
@@ -101,7 +102,7 @@ namespace StormPig.UI {
                     if (previewInstance != null) {
                         Destroy(previewInstance.gameObject);
                     }
-                    previewInstance = Instantiate(it, itemContainter);
+                    previewInstance = Instantiate(itemPreviewPrefabs[0], itemContainter);
 
                     if (previewInstance.Text.gameObject.activeInHierarchy) {
                         previewInstance.Text.gameObject.SetActive(false);

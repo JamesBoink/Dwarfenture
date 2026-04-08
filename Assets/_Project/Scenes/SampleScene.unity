@@ -6977,12 +6977,17 @@ MonoBehaviour:
   cells: []
   itemPrefabs:
   - {fileID: 4991957787487056430, guid: 409c1e1abe67d624ba30f8e6b8ed043d, type: 3}
+  itemPreviewPrefabs:
+  - {fileID: 6134287950298519043, guid: 306434ef376024d40a2f45eaeb7bf8ac, type: 3}
   freeSpaceColor: {r: 0, g: 1, b: 0.1530397, a: 0.23529412}
   takenSpaceColor: {r: 0.9433962, g: 0.084549636, b: 0.084549636, a: 0.23529412}
   gridX: 9
   gridY: 4
   _hoverXOffset: 25
   _hoverYOffset: -15
+  currentMovingItem: {fileID: 0}
+  currentHoveredOnItem: {fileID: 0}
+  previewInstance: {fileID: 0}
 --- !u!1001 &1906087017
 PrefabInstance:
   m_ObjectHideFlags: 0
