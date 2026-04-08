@@ -23,12 +23,12 @@ namespace StormPig.Player {
         }
         
         public void Move(Vector2 v) {
-            if(v.x < 0.1f || v.y < 0.1f) { // if we're moving in one direction only just apply acceleration
+            if(v.x == 0f || v.y == 0f) { // if we're moving in one direction only just apply acceleration
                 _rb.linearVelocity = new Vector3(v.x * ControllerParameters.TargetMoveSpeed, _rb.linearVelocity.y, v.y * ControllerParameters.TargetMoveSpeed);
-            } else {  // if we're moving in angular direction, halve the applications so we wont move faster than allowed
-                _rb.linearVelocity = new Vector3((v.x * (ControllerParameters.TargetMoveSpeed / 2f)), _rb.linearVelocity.y, (v.y * (ControllerParameters.TargetMoveSpeed / 2f)));
+            } else {  // if we're moving in angular direction, halve the applications so we wont move faster than allowed                      
+                _rb.linearVelocity = new Vector3((Mathf.Sign(v.x) * (ControllerParameters.TargetMoveSpeed / 2f)), _rb.linearVelocity.y, (Mathf.Sign(v.y) * (ControllerParameters.TargetMoveSpeed / 2f)));
             }
-           
+
         }
 
         public void Jump() {
@@ -65,8 +65,9 @@ namespace StormPig.Player {
                 StopGravity();
                 return;
             }
-           // if(_currentVelocity.y <= ControllerParameters.Gravity) { return; }
-           _rb.linearVelocity += new Vector3(0f, ControllerParameters.Gravity,0f);
+
+            if (_rb.linearVelocity.y <= ControllerParameters.MaxGravity) { return; }
+           _rb.linearVelocity += new Vector3(0f, ControllerParameters.Gravity, 0f);
         }
 
         /// <summary>

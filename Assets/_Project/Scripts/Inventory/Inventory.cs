@@ -9,9 +9,9 @@ namespace StormPig.Inventories {
         [field: SerializeField] public List<Item> Items { get; private set; } = new List<Item>();
         [SerializeField] private List<ItemStack> stacks = new List<ItemStack>();
 
-        public System.Action<Vector2Int[], Sprite, int> VisualizeItem;
-        public System.Action<Vector2Int[], int> VisualizeStack;
-        public System.Action<int> AcceptedAmmount;
+        public System.Action<Vector2Int[], Sprite, int> VisualizeItem { get; set; }
+        public System.Action<Vector2Int[], int> VisualizeStack { get; set; }
+        public System.Action<int> AcceptedAmmount { get; set; }
         public void CreateSpace(int x, int y) {
             SpaceTaken = new bool[x][];
 
@@ -26,7 +26,7 @@ namespace StormPig.Inventories {
         /// </summary>
         /// <param name="item"></param>
         /// <returns>Wheter we succedeed in item adding</returns>
-        public bool TryAddItem(Item item, int ammount) {
+        public bool TryAddItem(Item item, int incoming) {
             List<Vector2Int> freeCoords;
             Vector2Int[] foundPos;
 
@@ -36,32 +36,41 @@ namespace StormPig.Inventories {
                 // just increase stack ammount
                 for(int i = 0; i < stacks.Count; i++) {
                     if(item.Data.Name == stacks[i].Original.Data.Name && stacks[i].Ammount < item.Data.MaxStack) {
-                        if(stacks[i].Ammount + ammount <= item.Data.MaxStack) {
-                            stacks[i].Ammount+= ammount;
+                        if(stacks[i].Ammount + incoming <= item.Data.MaxStack) {
+                            stacks[i].Ammount+= incoming;
                             Global.Log.Trace("Increased stack ammount for stack:  <color=green>" + stacks[i].Original.Data.name + "</color> to: " + stacks[i].Ammount);
                             VisualizeStack?.Invoke(stacks[i].Original.InventoryPosition, stacks[i].Ammount);
                             return true;
                         } else {
-                            int acceptedAmmount = item.Data.MaxStack - ammount;
-                            stacks[i].Ammount += acceptedAmmount;
-                            Global.Log.Trace("Increased stack ammount for stack:  <color=green>" + stacks[i].Original.Data.name + "</color> to: " + stacks[i].Ammount);
-                            VisualizeStack?.Invoke(stacks[i].Original.InventoryPosition, stacks[i].Ammount);
+                  
+                            int maxAcceptableAmmount = item.Data.MaxStack - stacks[i].Ammount; // first check how much can we actually take
+                      
+                            if(incoming <= maxAcceptableAmmount) {
+                                stacks[i].Ammount += incoming;
+                                Global.Log.Trace("Increased stack ammount for stack:  <color=green>" + stacks[i].Original.Data.name + "</color> to: " + stacks[i].Ammount);
+                                VisualizeStack?.Invoke(stacks[i].Original.InventoryPosition, stacks[i].Ammount);
+                            } else {
+                                int remaining = incoming - maxAcceptableAmmount; // 
+                                stacks[i].Ammount += maxAcceptableAmmount;
+                                Global.Log.Trace("Increased stack ammount for stack:  <color=green>" + stacks[i].Original.Data.name + "</color> to: " + stacks[i].Ammount);
+                                VisualizeStack?.Invoke(stacks[i].Original.InventoryPosition, stacks[i].Ammount);
 
 
-                            if (!CheckFreeSpace(item, out freeCoords)) {
-                                AcceptedAmmount?.Invoke(acceptedAmmount); //If we recieve a stack but cant take entire thing, callbak to say how much we took
-                                return false;
-                            }
+                                if (!CheckFreeSpace(item, out freeCoords)) {
+                                    AcceptedAmmount?.Invoke(maxAcceptableAmmount); //If we recieve a stack but cant take entire thing, callbak to say how much we took
+                                    return false;
+                                }
 
-                            if (FindSpaceForItem(item.Data.InventorySpaceTaken, freeCoords, out foundPos)) {
-                                stacks.Add(new ItemStack(item, ammount- acceptedAmmount));
-                                item.InventoryPosition = foundPos;
-                                Items.Add(item);
-                                Global.Log.Trace("Added item:  <color=green>" + item.Data.name + "</color>  to inventory:  " + name + " as a stack");
-                                VisualizeItem?.Invoke(foundPos, item.Data.UIIcon, stacks[stacks.Count - 1].Ammount);
-                                return true;
-                            }
-                            AcceptedAmmount?.Invoke(acceptedAmmount);  //If we recieve a stack but cant take entire thing, callbak to say how much we took
+                                if (FindSpaceForItem(item.Data.InventorySpaceTaken, freeCoords, out foundPos)) {
+                                    stacks.Add(new ItemStack(item, remaining));
+                                    item.InventoryPosition = foundPos;
+                                    Items.Add(item);
+                                    Global.Log.Trace("Added item:  <color=green>" + item.Data.name + "</color>  to inventory:  " + name + " as a stack");
+                                    VisualizeItem?.Invoke(foundPos, item.Data.UIIcon, stacks[stacks.Count - 1].Ammount);
+                                    return true;
+                                }
+                                AcceptedAmmount?.Invoke(remaining);  //If we recieve a stack but cant take entire thing, callbak to say how much we took
+                            }                            
                         }
                     }
                 }
@@ -73,7 +82,7 @@ namespace StormPig.Inventories {
                 }
 
                 if (FindSpaceForItem(item.Data.InventorySpaceTaken, freeCoords, out foundPos)) {
-                    stacks.Add(new ItemStack(item, ammount));
+                    stacks.Add(new ItemStack(item, incoming));
                     item.InventoryPosition = foundPos;
                     Items.Add(item);
                     Global.Log.Trace("Added item:  <color=green>" + item.Data.name + "</color>  to inventory:  " + name + " as a stack");

@@ -22,6 +22,7 @@ namespace StormPig.Player {
 
         private void CamFollow() {
             _cam.transform.position = transform.position + _pP.ControllerParameters.CamOffset;
+            _cam.transform.rotation = Quaternion.Euler(_pP.ControllerParameters.CamRotation);
         }
 
       
