@@ -36,13 +36,16 @@ namespace StormPig.UI {
         private List<ItemUI> items = new List<ItemUI>();
         private readonly List<RaycastResult> itemHits = new();
 
-        private ItemUI currentMovingItem = null;
-        private ItemUI currentHoveredOnItem = null;
-        private ItemUI previewInstance = null;
+        private ItemUI _currentSelectedStack = null;
+        private ItemUI _currentMovingItem = null;
+        private ItemUI _currentHoveredOnItem = null;
+        private ItemUI _previewInstance = null;
 
         private Vector3 lastItemPosition;
 
         private bool _splittingStack = false;
+        private int _stackAmmount;
+
 
         private void Awake() {
             cells = new InventoryCell[cellImages.Length];
@@ -68,6 +71,14 @@ namespace StormPig.UI {
             if (!panelInventory.activeInHierarchy) { return; }
             DisplayInfo();
 
+
+            if(Input.GetMouseButtonDown(0) && _splittingStack && _currentMovingItem != null) {
+                if (_previewInstance != null) {
+                    TryPutStack();
+                }
+            }
+
+
             if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift)) {
                 DetectStackItem();
                 Global.Log.Trace("Split stack behaviour detected");
@@ -76,22 +87,22 @@ namespace StormPig.UI {
                 Global.Log.Trace("Click on item behaviour detected");             
             }
 
-            if (Input.GetMouseButton(0) && currentMovingItem != null) {
+            if (_currentMovingItem != null) {
                 Vector2 pos;
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(currentMovingItem.Rect.parent as RectTransform,  Input.mousePosition, null,   out pos );
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(_currentMovingItem.Rect.parent as RectTransform,  Input.mousePosition, null,   out pos );
 
-                currentMovingItem.Rect.anchoredPosition = pos;
+                _currentMovingItem.Rect.anchoredPosition = pos;
             }
 
-            if (Input.GetMouseButtonUp(0)) {
+            if (Input.GetMouseButtonUp(0) && !_splittingStack) {
      
-                if (previewInstance != null) {
+                if (_previewInstance != null) {
                     TryPutItem();                 
                 }
-                currentMovingItem = null;
+                _currentMovingItem = null;
             }
 
-            if(currentMovingItem != null && previewInstance != null) {
+            if(_currentMovingItem != null && _previewInstance != null) {
                 ItemPreview();
             }
         }
@@ -107,26 +118,26 @@ namespace StormPig.UI {
 
             for(int i =0; i < results.Count; i++) {
                 if(results[i].gameObject.TryGetComponent(out ItemUI it)) {
-                    currentMovingItem = it;
-                    lastItemPosition = currentMovingItem.Rect.position;
+                    _currentMovingItem = it;
+                    lastItemPosition = _currentMovingItem.Rect.position;
 
-                    if (previewInstance != null) {
-                        Destroy(previewInstance.gameObject);
+                    if (_previewInstance != null) {
+                        Destroy(_previewInstance.gameObject);
                     }
-                    previewInstance = Instantiate(itemPreviewPrefabs[0], itemContainter);
+                    _previewInstance = Instantiate(itemPreviewPrefabs[0], itemContainter);
 
-                    if (previewInstance.Text.gameObject.activeInHierarchy) {
-                        previewInstance.Text.gameObject.SetActive(false);
+                    if (_previewInstance.Text.gameObject.activeInHierarchy) {
+                        _previewInstance.Text.gameObject.SetActive(false);
                     }
 
-                    previewInstance.transform.SetAsFirstSibling();
+                    _previewInstance.transform.SetAsFirstSibling();
 
-                    previewInstance.Icon.sprite = null;
-                    previewInstance.Icon.color = freeSpaceColor;
-                    previewInstance.Rect.anchorMin = new Vector2(0f, 1f);
-                    previewInstance.Rect.anchorMax = previewInstance.Rect.anchorMin;
-                    previewInstance.Rect.anchoredPosition = currentMovingItem.Rect.anchoredPosition;
-                    Global.Log.Trace("Clicked on an ItemUI: " + currentMovingItem.name);
+                    _previewInstance.Icon.sprite = null;
+                    _previewInstance.Icon.color = freeSpaceColor;
+                    _previewInstance.Rect.anchorMin = new Vector2(0f, 1f);
+                    _previewInstance.Rect.anchorMax = _previewInstance.Rect.anchorMin;
+                    _previewInstance.Rect.anchoredPosition = _currentMovingItem.Rect.anchoredPosition;
+                    Global.Log.Trace("Clicked on an ItemUI: " + _currentMovingItem.name);
                     if (_hoverPanel.gameObject.activeInHierarchy) {
                         _hoverPanel.gameObject.SetActive(false);
                     }
@@ -150,6 +161,7 @@ namespace StormPig.UI {
                     _splittingStack = true;
                     _splitStackPanel.gameObject.SetActive(true);
                     _splitStackPanel.DisplayInfo(it);
+                    _currentSelectedStack = it;
                     break;
                 }
             }
@@ -161,7 +173,7 @@ namespace StormPig.UI {
             float dist;
             float lastDist = 10000000f;
             for (int i = 0; i < cellImages.Length; i++) {
-                dist = Mathf.Abs(Vector2.Distance(cellImages[i].rectTransform.position, currentMovingItem.Rect.position));
+                dist = Mathf.Abs(Vector2.Distance(cellImages[i].rectTransform.position, _currentMovingItem.Rect.position));
                 if (dist < lastDist) {
                     closest = i;
                     lastDist = dist;
@@ -169,45 +181,79 @@ namespace StormPig.UI {
             }
 
             if(closest != -1) {
-                previewInstance.Rect.anchoredPosition = cellImages[closest].rectTransform.anchoredPosition;
-                previewInstance.GridPositions = new Vector2Int[1];
-                previewInstance.GridPositions[0] = cells[closest].Position;
+                _previewInstance.Rect.anchoredPosition = cellImages[closest].rectTransform.anchoredPosition;
+                _previewInstance.GridPositions = new Vector2Int[1];
+                _previewInstance.GridPositions[0] = cells[closest].Position;
 
                 for(int i =0; i < items.Count; i++) {
                     for(int j =0; j < items[i].GridPositions.Length; j++) {
-                        if (items[i] != currentMovingItem && items[i].GridPositions[j] == cells[closest].Position) {
-                            previewInstance.Icon.color = takenSpaceColor;
+                        if (items[i] != _currentMovingItem && items[i].GridPositions[j] == cells[closest].Position) {
+                            _previewInstance.Icon.color = takenSpaceColor;
                             return;
                         }
                     }
                 }
-                if(previewInstance.Icon.color != freeSpaceColor) {
-                    previewInstance.Icon.color = freeSpaceColor;
+                if(_previewInstance.Icon.color != freeSpaceColor) {
+                    _previewInstance.Icon.color = freeSpaceColor;
                 }
             }
         }
 
         private void SplitStack(int val) {
+            ItemUI it = Instantiate(_currentSelectedStack, itemContainter);
+            _stackAmmount = val;
 
+            _currentMovingItem = it;
+            if (_previewInstance != null) {
+                Destroy(_previewInstance.gameObject);
+            }
+            _previewInstance = Instantiate(itemPreviewPrefabs[0], itemContainter);
+
+            if (_previewInstance.Text.gameObject.activeInHierarchy) {
+                _previewInstance.Text.gameObject.SetActive(false);
+            }
+
+            _previewInstance.transform.SetAsFirstSibling();
+
+            _previewInstance.Icon.sprite = null;
+            _previewInstance.Icon.color = freeSpaceColor;
+            _previewInstance.Rect.anchorMin = new Vector2(0f, 1f);
+            _previewInstance.Rect.anchorMax = _previewInstance.Rect.anchorMin;
+            _previewInstance.Rect.anchoredPosition = _currentMovingItem.Rect.anchoredPosition;
         }
 
         private void CancelSplitStack() {
             _splittingStack = false;
+            Destroy(_currentMovingItem.gameObject);
+        }
+
+        private void TryPutStack() {
+            if (_previewInstance.Icon.color == takenSpaceColor) { return; }
+
+            _currentMovingItem.GridPositions = _previewInstance.GridPositions;
+            _currentMovingItem.Rect.position = _previewInstance.Rect.position;
+
+            inv.SplitStack(_currentSelectedStack.GridPositions, _stackAmmount, _currentMovingItem.GridPositions);
+
+
+            Destroy(_previewInstance.gameObject);
+            Destroy(_currentMovingItem.gameObject);
+            _splittingStack = false;
         }
 
         private void TryPutItem() {
-            if(previewInstance.Icon.color == takenSpaceColor) {
-                currentMovingItem.Rect.position = lastItemPosition;
-                Destroy(previewInstance.gameObject);
+            if(_previewInstance.Icon.color == takenSpaceColor) {
+                _currentMovingItem.Rect.position = lastItemPosition;
+                Destroy(_previewInstance.gameObject);
                 return;
             }
 
 
-            inv.ChangeItemPosition(null, -1, currentMovingItem.GridPositions, previewInstance.GridPositions);
-            currentMovingItem.GridPositions = previewInstance.GridPositions;
-            currentMovingItem.Rect.position = previewInstance.Rect.position;
+            inv.ChangeItemPosition(null, -1, _currentMovingItem.GridPositions, _previewInstance.GridPositions);
+            _currentMovingItem.GridPositions = _previewInstance.GridPositions;
+            _currentMovingItem.Rect.position = _previewInstance.Rect.position;
 
-            Destroy(previewInstance.gameObject);
+            Destroy(_previewInstance.gameObject);
 
             // After placing item, to make sure info is still there
             DisplayHoverPanel();
@@ -279,19 +325,19 @@ namespace StormPig.UI {
             ItemUI check = null;
             for (int i = 0; i < itemHits.Count; i++) {
                 if(itemHits[i].gameObject.TryGetComponent(out ItemUI it)){
-                    if(it == currentHoveredOnItem) {
+                    if(it == _currentHoveredOnItem) {
                         itemHits.Clear();
                         return; 
                     }
                     check = it;
-                    currentHoveredOnItem = it;
+                    _currentHoveredOnItem = it;
                 }
             }
 
             itemHits.Clear();
 
             if (check == null) {               
-                currentHoveredOnItem = null;
+                _currentHoveredOnItem = null;
                 _hoverPanel.gameObject.SetActive(false);
                 return;
             }
@@ -302,11 +348,11 @@ namespace StormPig.UI {
             _hoverPanel.gameObject.SetActive(true);
 
             _hoverPanel.Rect.position = new Vector3(
-               currentHoveredOnItem.Rect.position.x - (currentHoveredOnItem.Rect.sizeDelta.x + _hoverPanel.Rect.sizeDelta.x / 2f + _hoverXOffset),
-               currentHoveredOnItem.Rect.position.y - (_hoverPanel.Rect.sizeDelta.y / 2f + _hoverYOffset),
-               currentHoveredOnItem.Rect.position.z);
+               _currentHoveredOnItem.Rect.position.x - (_currentHoveredOnItem.Rect.sizeDelta.x + _hoverPanel.Rect.sizeDelta.x / 2f + _hoverXOffset),
+               _currentHoveredOnItem.Rect.position.y - (_hoverPanel.Rect.sizeDelta.y / 2f + _hoverYOffset),
+               _currentHoveredOnItem.Rect.position.z);
 
-            _hoverPanel.DisplayInfo(inv.GetItemInfo(currentHoveredOnItem.GridPositions), currentHoveredOnItem.Icon.sprite);
+            _hoverPanel.DisplayInfo(inv.GetItemInfo(_currentHoveredOnItem.GridPositions), _currentHoveredOnItem.Icon.sprite);
         }
     }
 }

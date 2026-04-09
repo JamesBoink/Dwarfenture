@@ -244,6 +244,8 @@ namespace StormPig.Inventories {
                         SpaceTaken[stacks[stacks.Count - 1].Original.InventoryPosition[z].x][stacks[stacks.Count - 1].Original.InventoryPosition[z].y] = true;
                     }
                     Global.Log.Trace("Split off a new stack of items:  <color=green>" + stacks[stacks.Count - 1].Original.Data.name + "</color> from stack:  <color=green>" + stacks[i].Original.Data.name + "</color>  in inventory:  " + name);
+                    VisualizeStack?.Invoke(stacks[i].Original.InventoryPosition, stacks[i].Ammount);
+                    VisualizeItem?.Invoke(newItem.InventoryPosition, newItem.Data.UIIcon, stacks[stacks.Count - 1].Ammount);
                     break;
                 }
             }
