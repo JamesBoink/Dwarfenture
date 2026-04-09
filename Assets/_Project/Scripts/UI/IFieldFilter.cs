@@ -19,6 +19,12 @@ namespace StormPig.UI {
                 }                
             }
 
+            if(exclude == null && exclude.Length == 0) {
+                // just return input since if exclude is 0
+                // means numbers only in string anyway
+                return input;
+            }
+
             for (int i = 0; i < input.Length; i++) {
                 for (int j = 0; j < exclude.Length; j++) {
                     if (input.Contains(exclude[j])) {
