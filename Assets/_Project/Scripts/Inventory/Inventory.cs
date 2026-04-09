@@ -61,7 +61,7 @@ namespace StormPig.Inventories {
                                     return false;
                                 }
 
-                                if (FindSpaceForItem(item.Data.InventorySpaceTaken, freeCoords, out foundPos)) {
+                                if (FindSpaceForItem(item.Data.InventorySpaceTaken(), freeCoords, out foundPos)) {
                                     stacks.Add(new ItemStack(item, remaining));
                                     item.InventoryPosition = foundPos;
                                     Items.Add(item);
@@ -81,7 +81,7 @@ namespace StormPig.Inventories {
                     return false;
                 }
 
-                if (FindSpaceForItem(item.Data.InventorySpaceTaken, freeCoords, out foundPos)) {
+                if (FindSpaceForItem(item.Data.InventorySpaceTaken(), freeCoords, out foundPos)) {
                     stacks.Add(new ItemStack(item, incoming));
                     item.InventoryPosition = foundPos;
                     Items.Add(item);
@@ -96,7 +96,7 @@ namespace StormPig.Inventories {
                 }
 
 
-                if (FindSpaceForItem(item.Data.InventorySpaceTaken, freeCoords, out foundPos)) {
+                if (FindSpaceForItem(item.Data.InventorySpaceTaken(), freeCoords, out foundPos)) {
                     item.InventoryPosition = foundPos;
                     Items.Add(item);
                     Global.Log.Trace("Added item:  <color=green>" + item.Data.name + "</color>  to inventory:  " + name);
@@ -281,7 +281,7 @@ namespace StormPig.Inventories {
         //                    return false;
         //                }
 
-        //                if (FindSpaceForItem(item.Data.InventorySpaceTaken, freeCoords, out foundPos)) {
+        //                if (FindSpaceForItem(item.Data.InventorySpaceTaken(), freeCoords, out foundPos)) {
         //                    stacks.Add(new ItemStack(item, ammount - acceptedAmmount));
         //                    item.InventoryPosition = foundPos;
         //                    Items.Add(item);
@@ -300,7 +300,7 @@ namespace StormPig.Inventories {
         //        return false;
         //    }
 
-        //    if (FindSpaceForItem(item.Data.InventorySpaceTaken, freeCoords, out foundPos)) {
+        //    if (FindSpaceForItem(item.Data.InventorySpaceTaken(), freeCoords, out foundPos)) {
         //        stacks.Add(new ItemStack(item, ammount));
         //        item.InventoryPosition = foundPos;
         //        Items.Add(item);
@@ -384,7 +384,7 @@ namespace StormPig.Inventories {
                 }
             }
 
-            if (freeSpace < (item.Data.InventorySpaceTaken.x * item.Data.InventorySpaceTaken.y)) {
+            if (freeSpace < (item.Data.InventorySpaceTaken().x * item.Data.InventorySpaceTaken().y)) {
                 Global.Log.Trace("Not enough space in inventory:  " + name + "  for item:  <color=green>" + item.Data.name + "</color>");
                 return false;
             }

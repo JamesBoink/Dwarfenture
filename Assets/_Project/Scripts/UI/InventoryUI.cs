@@ -7,6 +7,7 @@ namespace StormPig.UI {
     public class InventoryUI : MonoBehaviour {
         [Header("Functionality")]
         [SerializeField] private HoverPanel _hoverPanel;
+        [SerializeField] private SplitStackPanel _splitStackPanel;
         [SerializeField] private GraphicRaycaster raycaster;
         [SerializeField] private EventSystem eventSystem;
         [Space(5)]
@@ -14,6 +15,7 @@ namespace StormPig.UI {
         [Header("Inventory")]
         [SerializeField] private Inventories.Inventory inv;
         [SerializeField] private Transform itemContainter;
+        [SerializeField] private GameObject panelInventory;
         [Space(2)]
         [SerializeField] private Image[] cellImages;
         [SerializeField] private InventoryCell[] cells;
@@ -34,11 +36,13 @@ namespace StormPig.UI {
         private List<ItemUI> items = new List<ItemUI>();
         private readonly List<RaycastResult> itemHits = new();
 
-         private ItemUI currentMovingItem = null;
-         private ItemUI currentHoveredOnItem = null;
-         private ItemUI previewInstance = null;
+        private ItemUI currentMovingItem = null;
+        private ItemUI currentHoveredOnItem = null;
+        private ItemUI previewInstance = null;
 
         private Vector3 lastItemPosition;
+
+        private bool _splittingStack = false;
 
         private void Awake() {
             cells = new InventoryCell[cellImages.Length];
@@ -56,14 +60,20 @@ namespace StormPig.UI {
             inv.CreateSpace(gridX, gridY);
             inv.VisualizeItem += VisualiseItem;
             inv.VisualizeStack += VisualiseStack;
+            _splitStackPanel.Initialize(SplitStack, CancelSplitStack);
         }
 
 
         private void Update() {
+            if (!panelInventory.activeInHierarchy) { return; }
             DisplayInfo();
 
-            if (Input.GetMouseButtonDown(0)) {
+            if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift)) {
+                DetectStackItem();
+                Global.Log.Trace("Split stack behaviour detected");
+            } else if (Input.GetMouseButtonDown(0)) {
                 DetectClickedUIItem();
+                Global.Log.Trace("Click on item behaviour detected");             
             }
 
             if (Input.GetMouseButton(0) && currentMovingItem != null) {
@@ -87,6 +97,7 @@ namespace StormPig.UI {
         }
 
         private void DetectClickedUIItem() {
+            if (_splittingStack) { return; }//disable object selection while splitting stacks
             PointerEventData pointerData = new PointerEventData(eventSystem) {
                 position = Input.mousePosition
             };
@@ -123,6 +134,27 @@ namespace StormPig.UI {
                 }
             }
         }
+        private void DetectStackItem() {
+            PointerEventData pointerData = new PointerEventData(eventSystem) {
+                position = Input.mousePosition
+            };
+
+            List<RaycastResult> results = new List<RaycastResult>();
+            raycaster.Raycast(pointerData, results);
+
+            for (int i = 0; i < results.Count; i++) {
+                if (results[i].gameObject.TryGetComponent(out ItemUI it)) {
+                    if (_hoverPanel.gameObject.activeInHierarchy) {
+                        _hoverPanel.gameObject.SetActive(false);
+                    }
+                    _splittingStack = true;
+                    _splitStackPanel.gameObject.SetActive(true);
+                    _splitStackPanel.DisplayInfo(it);
+                    break;
+                }
+            }
+        }
+       
 
         private void ItemPreview() {            
             int closest = -1;
@@ -153,6 +185,14 @@ namespace StormPig.UI {
                     previewInstance.Icon.color = freeSpaceColor;
                 }
             }
+        }
+
+        private void SplitStack(int val) {
+
+        }
+
+        private void CancelSplitStack() {
+            _splittingStack = false;
         }
 
         private void TryPutItem() {
@@ -224,6 +264,7 @@ namespace StormPig.UI {
         /// Displays item information to hover panel
         /// </summary>
         private void DisplayInfo() {
+            if (_splittingStack) { return; }
             if (!EventSystem.current.IsPointerOverGameObject()) { return; }
 
             PointerEventData data = new PointerEventData(EventSystem.current) {
