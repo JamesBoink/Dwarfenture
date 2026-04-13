@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using StormPig.Items;
+using System.Linq;
 
 namespace StormPig.Inventories {
     public class Inventory : MonoBehaviour {
@@ -11,7 +12,10 @@ namespace StormPig.Inventories {
 
         public System.Action<Vector2Int[], Sprite, int> VisualizeItem { get; set; }
         public System.Action<Vector2Int[], int> VisualizeStack { get; set; }
-        public System.Action<int> AcceptedAmmount { get; set; }
+        public System.Action<int> AcceptedAmmount { get; set; }       
+        public System.Action<Vector2Int[]> FuseAndRemove { get; set; }
+        public System.Action FuseAndLeave { get; set; }
+
         public void CreateSpace(int x, int y) {
             SpaceTaken = new bool[x][];
 
@@ -115,7 +119,7 @@ namespace StormPig.Inventories {
         public void RemoveItem(Vector2Int[] sourcePos, int ammount) {
             Item item = null;
             for (int i =0; i < Items.Count; i++) {
-                if(Items[i].InventoryPosition == sourcePos) {
+                if(Items[i].InventoryPosition.SequenceEqual(sourcePos)) {
                     item = Items[i];
                     break;
                 }
@@ -251,66 +255,60 @@ namespace StormPig.Inventories {
             }
         }
 
-        //public void FuseStacks(Vector2Int[] giverPos, int ammount, Vector2Int[] recieverPos) {
-        //    Item item = null;
-        //    for (int i = 0; i < Items.Count; i++) {
-        //        if (Items[i].InventoryPosition == giverPos) {
-        //            item = Items[i];
-        //            break;
-        //        }
-        //    }
-        //    if (item == null) {
-        //        Global.Log.Critical("Item stack to split has not been found in inventory: " + name + ". Something deleted the item without a cleanup!");
-        //        return;
-        //    }
+        /// <summary>
+        /// Fuses two stacks together, either removes giver or just shuffles ammounts
+        /// </summary>
+        /// <param name="giverPos"></param>
+        /// <param name="recieverPos"></param>
+        public void FuseStacks(Vector2Int[] giverPos, Vector2Int[] recieverPos) {
+            ItemStack giverStack = null;
+            ItemStack recieverStack = null;
 
-        //    for (int i = 0; i < stacks.Count; i++) {
-        //        if (item.Data.Name == stacks[i].Original.Data.Name && stacks[i].Ammount < item.Data.MaxStack) {
-        //            if (stacks[i].Ammount + ammount <= item.Data.MaxStack) {
-        //                stacks[i].Ammount += ammount;
-        //                Global.Log.Trace("Increased stack ammount for stack:  <color=green>" + stacks[i].Original.Data.name + "</color> to: " + stacks[i].Ammount);
-        //                VisualizeStack?.Invoke(stacks[i].Original.InventoryPosition, stacks[i].Ammount);
-        //                return true;
-        //            } else {
-        //                int acceptedAmmount = item.Data.MaxStack - ammount;
-        //                stacks[i].Ammount += acceptedAmmount;
-        //                Global.Log.Trace("Increased stack ammount for stack:  <color=green>" + stacks[i].Original.Data.name + "</color> to: " + stacks[i].Ammount);
-        //                VisualizeStack?.Invoke(stacks[i].Original.InventoryPosition, stacks[i].Ammount);
+            for (int i = 0; i < stacks.Count; i++) {
+                
+                if (stacks[i].Original.InventoryPosition.SequenceEqual(giverPos)) {
+                    giverStack = stacks[i];
+                }else if (stacks[i].Original.InventoryPosition.SequenceEqual(recieverPos)) {
+                    recieverStack = stacks[i];
+                } 
+            }
 
 
-        //                if (!CheckFreeSpace(item, out freeCoords)) {
-        //                    AcceptedAmmount?.Invoke(acceptedAmmount); //If we recieve a stack but cant take entire thing, callbak to say how much we took
-        //                    return false;
-        //                }
+            // if for some reason we didn't get one of stacks, return and print error
+            if (giverStack == null || recieverStack == null) {
+                Global.Log.Critical("Item stack to split or recieve has not been found in inventory: " + name + ". Something deleted the stack without a cleanup! Giver pos: " + giverPos[0] + " recivere pos: " + recieverPos[0]);
+                return;
+            }
 
-        //                if (FindSpaceForItem(item.Data.InventorySpaceTaken(), freeCoords, out foundPos)) {
-        //                    stacks.Add(new ItemStack(item, ammount - acceptedAmmount));
-        //                    item.InventoryPosition = foundPos;
-        //                    Items.Add(item);
-        //                    Global.Log.Trace("Added item:  <color=green>" + item.Data.name + "</color>  to inventory:  " + name + " as a stack");
-        //                    VisualizeItem?.Invoke(foundPos, item.Data.UIIcon, stacks[stacks.Count - 1].Ammount);
-        //                    return true;
-        //                }
-        //                AcceptedAmmount?.Invoke(acceptedAmmount);  //If we recieve a stack but cant take entire thing, callbak to say how much we took
-        //            }
-        //        }
-        //    }
+            if (recieverStack.Original.Data != giverStack.Original.Data) {
+                Global.Log.Trace("Can't fuse stacks, original and reciever are different items.");
+                return;
+            }
 
-        //    // If not create new stack at position
-        //    // and add as item
-        //    if (!CheckFreeSpace(item, out freeCoords)) {
-        //        return false;
-        //    }
+            if (recieverStack.Ammount + giverStack.Ammount <= recieverStack.Original.Data.MaxStack) {
 
-        //    if (FindSpaceForItem(item.Data.InventorySpaceTaken(), freeCoords, out foundPos)) {
-        //        stacks.Add(new ItemStack(item, ammount));
-        //        item.InventoryPosition = foundPos;
-        //        Items.Add(item);
-        //        Global.Log.Trace("Added item:  <color=green>" + item.Data.name + "</color>  to inventory:  " + name + " as a stack");
-        //        VisualizeItem?.Invoke(foundPos, item.Data.UIIcon, stacks[stacks.Count - 1].Ammount);
-        //        return true;
-        //    }
-        //}
+                Global.Log.Trace("Fusing stacks, increased ammount of: <color=green>" + recieverStack.Original + "</color> " + " by " + giverStack.Ammount + " and removed: <color=green>" + giverStack.Original + "</color>" + " in inventory: " + gameObject.name);
+
+                // add all givers ammount to reciever, remove giver, visualise and return info
+                recieverStack.Ammount += giverStack.Ammount;
+                FuseAndRemove?.Invoke(giverStack.Original.InventoryPosition);
+                RemoveItem(giverStack.Original.InventoryPosition, giverStack.Ammount);
+                VisualizeStack?.Invoke(recieverPos, recieverStack.Ammount);
+            } else {
+                // if we cant put entire giver into reciever
+                // remove respective ammount from giver, set reciever as max
+                giverStack.Ammount -= (recieverStack.Original.Data.MaxStack - recieverStack.Ammount);
+                recieverStack.Ammount = recieverStack.Original.Data.MaxStack;
+
+                // visualise and return info
+                VisualizeStack?.Invoke(recieverPos, recieverStack.Ammount);
+                FuseAndLeave?.Invoke();
+            }
+
+
+            // If not create new stack at position
+            // and add as item
+        }
 
         /// <summary>
         /// Allows changing existing items position as well as adding it manually to inventory by dragging it

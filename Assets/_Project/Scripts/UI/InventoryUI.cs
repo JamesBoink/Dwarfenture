@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StormPig.UI {
     public class InventoryUI : MonoBehaviour {
@@ -33,7 +34,7 @@ namespace StormPig.UI {
         [SerializeField] private float _hoverXOffset;
         [SerializeField] private float _hoverYOffset;
 
-        private List<ItemUI> items = new List<ItemUI>();
+        [SerializeField] private List<ItemUI> items = new List<ItemUI>();
         private readonly List<RaycastResult> itemHits = new();
 
         private ItemUI _currentSelectedStack = null;
@@ -63,6 +64,7 @@ namespace StormPig.UI {
             inv.CreateSpace(gridX, gridY);
             inv.VisualizeItem += VisualiseItem;
             inv.VisualizeStack += VisualiseStack;
+            inv.FuseAndRemove += FuseRemove;
             _splitStackPanel.Initialize(SplitStack, CancelSplitStack);
         }
 
@@ -95,14 +97,16 @@ namespace StormPig.UI {
             }
 
             if (Input.GetMouseButtonUp(0) && !_splittingStack) {
-     
-                if (_previewInstance != null) {
-                    TryPutItem();                 
-                }
+                
+                if(_previewInstance != null) {
+                    TryPutItem();
+                }               
                 _currentMovingItem = null;
             }
 
-            if(_currentMovingItem != null && _previewInstance != null) {
+           
+
+            if (_currentMovingItem != null && _previewInstance != null) {
                 ItemPreview();
             }
         }
@@ -228,7 +232,10 @@ namespace StormPig.UI {
         }
 
         private void TryPutStack() {
-            if (_previewInstance.Icon.color == takenSpaceColor) { return; }
+            if (_previewInstance.Icon.color == takenSpaceColor) {
+             //   inv.FuseStacks(_currentMovingItem.GridPositions, _previewInstance.GridPositions);
+                return;
+            }
 
             _currentMovingItem.GridPositions = _previewInstance.GridPositions;
             _currentMovingItem.Rect.position = _previewInstance.Rect.position;
@@ -241,10 +248,22 @@ namespace StormPig.UI {
             _splittingStack = false;
         }
 
+        private void FuseRemove(Vector2Int[] positions) {
+            for(int i =0; i < items.Count; i++) {
+                if (items[i].GridPositions.SequenceEqual(positions)) {
+                    Destroy(items[i].gameObject);
+                    items.RemoveAt(i);
+                }
+            }
+             _currentMovingItem.Rect.position = lastItemPosition;
+             Destroy(_previewInstance.gameObject);
+        }
+
         private void TryPutItem() {
             if(_previewInstance.Icon.color == takenSpaceColor) {
-                _currentMovingItem.Rect.position = lastItemPosition;
-                Destroy(_previewInstance.gameObject);
+                // _currentMovingItem.Rect.position = lastItemPosition;
+                // Destroy(_previewInstance.gameObject);
+                inv.FuseStacks(_currentMovingItem.GridPositions, _previewInstance.GridPositions);
                 return;
             }
 
@@ -295,10 +314,8 @@ namespace StormPig.UI {
         }
 
         private void VisualiseStack(Vector2Int[] positions, int ammount) {
-            for(int i = 0; i < items.Count;i++) {
-               
-
-                if(items[i].GridPositions == positions) {
+            for(int i = 0; i < items.Count;i++) {              
+                if(items[i].GridPositions.SequenceEqual(positions)) {
                     items[i].Text.SetText("{0}", ammount);
                     Global.Log.Trace("Increased UI stack ammount of: " + items[i].gameObject.name);
                     break;
