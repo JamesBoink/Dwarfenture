@@ -233,7 +233,7 @@ namespace StormPig.UI {
 
         private void TryPutStack() {
             if (_previewInstance.Icon.color == takenSpaceColor) {
-             //   inv.FuseStacks(_currentMovingItem.GridPositions, _previewInstance.GridPositions);
+               // inv.FuseStacks(_currentSelectedStack.GridPositions, _previewInstance.GridPositions);
                 return;
             }
 
@@ -261,8 +261,6 @@ namespace StormPig.UI {
 
         private void TryPutItem() {
             if(_previewInstance.Icon.color == takenSpaceColor) {
-                // _currentMovingItem.Rect.position = lastItemPosition;
-                // Destroy(_previewInstance.gameObject);
                 inv.FuseStacks(_currentMovingItem.GridPositions, _previewInstance.GridPositions);
                 return;
             }

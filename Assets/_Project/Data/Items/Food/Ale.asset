@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81a4a0c1f0ae0e54bbd9055bec5e769a, type: 3}
+  m_Name: Ale
+  m_EditorClassIdentifier: com.StormPig.Items::StormPig.Items.ItemData
+  <Name>k__BackingField: Ale
+  <Description>k__BackingField: Standard refreshing dwarven ale. Common dwarf drink.
+    They DO sell pints.
+  <Weight>k__BackingField: 0.6
+  <Type>k__BackingField: 6
+  <Quality>k__BackingField: 1
+  <MaxStack>k__BackingField: 3
+  <UIIcon>k__BackingField: {fileID: 21300000, guid: 0c0e2491595bd7447a0aeefb25a3140e, type: 3}
+  _inventorySpace: 0
+  <AdditionalParameters>k__BackingField:
+  - <Type>k__BackingField: 3
+    <Value>k__BackingField: 30

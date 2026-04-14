@@ -54,7 +54,8 @@ namespace StormPig.Items {
         Damage,
         Armor,
         HealthRegen,
-
+        Hydration,
+        Satiation,
     }
 
     public enum InvSpace {

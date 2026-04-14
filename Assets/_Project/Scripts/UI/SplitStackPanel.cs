@@ -22,7 +22,7 @@ namespace StormPig.UI {
 
             int ammount = int.Parse(it.Text.text);
             _maxValue = (ammount - 1);
-            _currentValue = (_maxValue / 2);
+            _currentValue = (_maxValue / 2) + 1;
             _stackSlider.maxValue = _maxValue;
             SetVisuals();
         }
@@ -57,8 +57,9 @@ namespace StormPig.UI {
         }
 
         private void SetVisuals() {
-            _stackIField.SetTextWithoutNotify(_currentValue.ToString());
             _stackSlider.value = _currentValue;
+            _stackSlider.SetValueWithoutNotify(_currentValue);
+            _stackIField.SetTextWithoutNotify(_currentValue.ToString());
         }
     }
 

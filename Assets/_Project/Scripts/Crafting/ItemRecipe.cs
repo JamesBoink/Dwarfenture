@@ -4,7 +4,7 @@ namespace StormPig.Crafting {
     [System.Serializable]
     public class RecipeRequirement {
         [field: SerializeField] public Items.ItemData[] Items{ get; private set; } = default;
-        [field: SerializeField] public int[] Quantities{ get; private set; } = default;
+        [field: SerializeField] public float[] Quantities{ get; private set; } = default;
     }
 
     [CreateAssetMenu(menuName =("StormPig/Item Recipe"))]
