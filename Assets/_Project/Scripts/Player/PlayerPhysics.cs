@@ -6,19 +6,26 @@ namespace StormPig.Player {
         [SerializeField] private Rigidbody _rb;
         [Header("Make sure to set origin on head position of object")]
         [SerializeField] private Transform _castOrigin;
+        [SerializeField] private Transform _intCastOrigin;
         [field: SerializeField] public ControllerParameters ControllerParameters { get; private set; }
 
         // serialized for debugging
         private bool _gravityReset = false;
-        [SerializeField] private bool _grounded;
-        [SerializeField] private float _currentMoveSpeed = 0f;
-        [SerializeField] private float _currentJumpForce = 0f;
+        private bool _grounded;
+        private float _currentMoveSpeed = 0f;
+        private float _currentJumpForce = 0f;
        // [SerializeField] private Vector3 _currentVelocity;
-        [SerializeField] private Vector3 _rbVelocity;
+        private Vector3 _rbVelocity;
+
+        private RaycastHit _interaction;
+        private GameObject _selectedInteractable = null;
+        public Interactables.IInteractable CurrentInteractable = null;
+
 
         public void Update() {
             GroundCast();
             Gravity();
+            InteractionBox();
             _rbVelocity = _rb.linearVelocity;
         }
         
@@ -55,7 +62,6 @@ namespace StormPig.Player {
         }
 
 
-
         /// <summary>
         /// Applies gravity unless grounded
         /// </summary>
@@ -81,9 +87,43 @@ namespace StormPig.Player {
             }
         }
 
+        /// <summary>
+        /// Casts a box that detects interactable objects
+        /// </summary>
+        private void InteractionBox() {
+            if (Physics.BoxCast(_intCastOrigin.position, ControllerParameters.IntHalfExt, Vector3.forward, out _interaction, Quaternion.identity, ControllerParameters.IntCastDist, ControllerParameters.InteractionMask.value)) {
+                // Null and cache check, to avoid unnecessary TryGetComponent calls
+                if(_selectedInteractable != null && _selectedInteractable == _interaction.collider.gameObject) { return; }
+
+                // Cache for check above
+                _selectedInteractable = _interaction.collider.gameObject;
+
+                // If we got interactable here, call its selected eg. higlight door, item, station
+                // if not nullify interactable ref
+                if (_selectedInteractable.TryGetComponent(out Interactables.IInteractable i)) {
+                    CurrentInteractable = i;
+                    CurrentInteractable.Selected();
+                } else {
+                    CleanupInteractable();
+                }
+            } else {
+                CleanupInteractable();
+            }
+        }
+
+        private void CleanupInteractable() {
+            if (CurrentInteractable != null) {
+                Global.Events.CleanupInteractionPanel?.Invoke();
+                CurrentInteractable = null; 
+            }
+        }
+
         public void OnDrawGizmos() {
             Gizmos.DrawCube(_castOrigin.position, ControllerParameters.BoxCastHalfExt * 2f);
             Gizmos.DrawCube(new Vector3(_castOrigin.position.x, _castOrigin.position.y- ControllerParameters.BoxCastDist, _castOrigin.position.z), ControllerParameters.BoxCastHalfExt * 2f);
+
+            Gizmos.DrawCube(_intCastOrigin.position, ControllerParameters.IntHalfExt * 2f);
+            Gizmos.DrawCube(new Vector3(_intCastOrigin.position.x, _intCastOrigin.position.y, _intCastOrigin.position.z + ControllerParameters.IntCastDist), ControllerParameters.IntHalfExt * 2f);
         }
     }
 

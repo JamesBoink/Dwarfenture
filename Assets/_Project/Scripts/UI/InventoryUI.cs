@@ -14,9 +14,10 @@ namespace StormPig.UI {
         [Space(5)]
 
         [Header("Inventory")]
-        [SerializeField] private Inventories.Inventory inv;
+        [SerializeField] private Inventories.Inventory _playerInventory;
         [SerializeField] private Transform itemContainter;
         [SerializeField] private GameObject panelInventory;
+        [SerializeField] private GameObject _panelLoot;
         [Space(2)]
         [SerializeField] private Image[] cellImages;
         [SerializeField] private InventoryCell[] cells;
@@ -47,6 +48,7 @@ namespace StormPig.UI {
         private bool _splittingStack = false;
         private int _stackAmmount;
 
+        private Inventories.Inventory _inv;
 
         private void Awake() {
             cells = new InventoryCell[cellImages.Length];
@@ -61,10 +63,10 @@ namespace StormPig.UI {
                     y++;
                 }
             }
-            inv.CreateSpace(gridX, gridY);
-            inv.VisualizeItem += VisualiseItem;
-            inv.VisualizeStack += VisualiseStack;
-            inv.FuseAndRemove += FuseRemove;
+            _playerInventory.CreateSpace(gridX, gridY);
+            _playerInventory.VisualizeItem += VisualiseItem;
+            _playerInventory.VisualizeStack += VisualiseStack;
+            _playerInventory.FuseAndRemove += FuseRemove;
             _splitStackPanel.Initialize(SplitStack, CancelSplitStack);
         }
 
@@ -240,7 +242,7 @@ namespace StormPig.UI {
             _currentMovingItem.GridPositions = _previewInstance.GridPositions;
             _currentMovingItem.Rect.position = _previewInstance.Rect.position;
 
-            inv.SplitStack(_currentSelectedStack.GridPositions, _stackAmmount, _currentMovingItem.GridPositions);
+            _playerInventory.SplitStack(_currentSelectedStack.GridPositions, _stackAmmount, _currentMovingItem.GridPositions);
 
 
             Destroy(_previewInstance.gameObject);
@@ -261,12 +263,12 @@ namespace StormPig.UI {
 
         private void TryPutItem() {
             if(_previewInstance.Icon.color == takenSpaceColor) {
-                inv.FuseStacks(_currentMovingItem.GridPositions, _previewInstance.GridPositions);
+                _playerInventory.FuseStacks(_currentMovingItem.GridPositions, _previewInstance.GridPositions);
                 return;
             }
 
 
-            inv.ChangeItemPosition(null, -1, _currentMovingItem.GridPositions, _previewInstance.GridPositions);
+            _playerInventory.ChangeItemPosition(null, -1, _currentMovingItem.GridPositions, _previewInstance.GridPositions);
             _currentMovingItem.GridPositions = _previewInstance.GridPositions;
             _currentMovingItem.Rect.position = _previewInstance.Rect.position;
 
@@ -367,7 +369,7 @@ namespace StormPig.UI {
                _currentHoveredOnItem.Rect.position.y - (_hoverPanel.Rect.sizeDelta.y / 2f + _hoverYOffset),
                _currentHoveredOnItem.Rect.position.z);
 
-            _hoverPanel.DisplayInfo(inv.GetItemInfo(_currentHoveredOnItem.GridPositions), _currentHoveredOnItem.Icon.sprite);
+            _hoverPanel.DisplayInfo(_playerInventory.GetItemInfo(_currentHoveredOnItem.GridPositions), _currentHoveredOnItem.Icon.sprite);
         }
     }
 }

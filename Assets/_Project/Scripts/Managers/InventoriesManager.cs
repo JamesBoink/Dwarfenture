@@ -1,20 +1,20 @@
 using UnityEngine;
 using StormPig.Inventories;
 using StormPig.Items;
-using StormPig.UI;
+using StormPig.Interactables;
 
 namespace StormPig.Managers {
     public class InventoriesManager : MonoBehaviour {
         public static InventoriesManager Instance;
         [SerializeField] private Inventory _playerInventory;
         [SerializeField] private Inventory[] InventoriesInLevel;
-        [SerializeField] private ItemObject[] _itemsInScene;
+        [SerializeField] private ItemPickupable[] _itemsInScene;
 
         public System.Action PickedUp;
 
         private void Awake() {
             Singleton();
-            for(int i =0; i < _itemsInScene.Length; i++) {
+            for (int i = 0; i < _itemsInScene.Length; i++) {
                 _itemsInScene[i].PickupA += PlayerPickup;
             }
         }

@@ -1,9 +1,11 @@
 {
-    "name": "com.StormPig.Inventory",
+    "name": "com.StormPig.Interactables",
     "rootNamespace": "",
     "references": [
-        "GUID:8e6aa296308a9b74dbc4f122ff5a63cb",
-        "GUID:f6fe36e36fee015438604d1f34fddefc"
+        "GUID:f6fe36e36fee015438604d1f34fddefc",
+        "GUID:23cc41b5fcc822b4295a7300fc91dfd5",
+        "GUID:64a4f582fe082734184b11b667bdce20",
+        "GUID:8e6aa296308a9b74dbc4f122ff5a63cb"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
