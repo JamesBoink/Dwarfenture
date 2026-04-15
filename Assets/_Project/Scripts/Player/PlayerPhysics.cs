@@ -93,7 +93,13 @@ namespace StormPig.Player {
         private void InteractionBox() {
             if (Physics.BoxCast(_intCastOrigin.position, ControllerParameters.IntHalfExt, Vector3.forward, out _interaction, Quaternion.identity, ControllerParameters.IntCastDist, ControllerParameters.InteractionMask.value)) {
                 // Null and cache check, to avoid unnecessary TryGetComponent calls
-                if(_selectedInteractable != null && _selectedInteractable == _interaction.collider.gameObject) { return; }
+                // but still display interactability if possible
+                if(_selectedInteractable != null && _selectedInteractable == _interaction.collider.gameObject) { 
+                    if(CurrentInteractable != null) {
+                        CurrentInteractable.Selected();
+                    }
+                    return; 
+                }
 
                 // Cache for check above
                 _selectedInteractable = _interaction.collider.gameObject;
@@ -107,6 +113,7 @@ namespace StormPig.Player {
                     CleanupInteractable();
                 }
             } else {
+                _selectedInteractable = null;
                 CleanupInteractable();
             }
         }
