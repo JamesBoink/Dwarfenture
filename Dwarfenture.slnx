@@ -1,0 +1,13 @@
+﻿<Solution>
+  <Project Path="com.StormPig.Managers.csproj" />
+  <Project Path="com.StormPig.Items.csproj" />
+  <Project Path="com.StormPig.Player.csproj" />
+  <Project Path="com.StormPig.Crafting.csproj" />
+  <Project Path="com.StormPig.Inventory.csproj" />
+  <Project Path="DOTween.Modules.csproj" />
+  <Project Path="com.StormPig.UI.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="com.StormPig.Interactables.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="com.StormPig.Global.csproj" />
+</Solution>

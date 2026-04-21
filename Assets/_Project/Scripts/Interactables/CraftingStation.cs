@@ -4,7 +4,7 @@ using StormPig.Crafting;
 namespace StormPig.Interactables {
     public class CraftingStation : MonoBehaviour, IInteractable {
         public void Interact() {
-
+            Managers.CraftingStationsManager.Instance.OpenStation(DataRef);
         }
 
         public void Selected() {

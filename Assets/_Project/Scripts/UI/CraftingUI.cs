@@ -1,23 +1,22 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace StormPig {
+namespace StormPig.UI {
     public class CraftingUI : MonoBehaviour {
-        [SerializeField] private GameObject craftingWindow;
+        [SerializeField] private GameObject _craftingWindow;
+        [SerializeField] private TextMeshProUGUI _nameText;
+        [SerializeField] private TextMeshProUGUI _descriptionText;
+        [SerializeField] private Image _icon;
 
-        private void Awake() {
-      //      still.InteractWithStation += HandleCraftingWindow;
+
+        public void OpenStation(Crafting.CraftingStationData c) {
+            _craftingWindow.SetActive(true);
+            _nameText.text = c.Name;
+            _descriptionText.text = c.Description;
+            _icon.sprite = c.Icon;
         }
+        
 
-        private void HandleCraftingWindow() {
-            if(craftingWindow.activeInHierarchy && craftingWindow.activeSelf) {
-                craftingWindow.SetActive(false);
-            } else {
-                craftingWindow.SetActive(true);
-            }
-        }
-
-        private void DisplayRecipes() {
-
-        }
     }
 }

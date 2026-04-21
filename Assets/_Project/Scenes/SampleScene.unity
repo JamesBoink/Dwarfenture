@@ -1092,6 +1092,50 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4e4281b92aaa69479d2542c36c3b594, type: 3}
+--- !u!1 &1208443617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1208443619}
+  - component: {fileID: 1208443618}
+  m_Layer: 0
+  m_Name: CraftingManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1208443618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208443617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd3357de5a65a94469ed29b204281574, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.StormPig.Managers::StormPig.Managers.CraftingStationsManager
+--- !u!4 &1208443619
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208443617}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.89226, y: 0.5, z: 24.23884}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1257294574
 GameObject:
   m_ObjectHideFlags: 0
@@ -1959,6 +2003,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3261622763842202594, guid: b14e414bd7faeae4fa3737e69a5fb094, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.22351074
+      objectReference: {fileID: 0}
     - target: {fileID: 3562524863082061709, guid: b14e414bd7faeae4fa3737e69a5fb094, type: 3}
       propertyPath: eventSystem
       value: 
@@ -1970,6 +2018,30 @@ PrefabInstance:
     - target: {fileID: 4138992273379375461, guid: b14e414bd7faeae4fa3737e69a5fb094, type: 3}
       propertyPath: m_Name
       value: Canvas_Inventory
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366014628668285994, guid: b14e414bd7faeae4fa3737e69a5fb094, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1.6999817
+      objectReference: {fileID: 0}
+    - target: {fileID: 5605994539682908256, guid: b14e414bd7faeae4fa3737e69a5fb094, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -48.422974
+      objectReference: {fileID: 0}
+    - target: {fileID: 5789089443456625827, guid: b14e414bd7faeae4fa3737e69a5fb094, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.0025634766
+      objectReference: {fileID: 0}
+    - target: {fileID: 8992583924512865731, guid: b14e414bd7faeae4fa3737e69a5fb094, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8992583924512865731, guid: b14e414bd7faeae4fa3737e69a5fb094, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8992583924512865731, guid: b14e414bd7faeae4fa3737e69a5fb094, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2300,6 +2372,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas_Main
       objectReference: {fileID: 0}
+    - target: {fileID: 2986761381730511932, guid: 49a58c5f1149856429a1568dc0701292, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.3408966
+      objectReference: {fileID: 0}
+    - target: {fileID: 2986761381730511932, guid: 49a58c5f1149856429a1568dc0701292, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8281138587565041778, guid: 49a58c5f1149856429a1568dc0701292, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.5800171
+      objectReference: {fileID: 0}
+    - target: {fileID: 8281138587565041778, guid: 49a58c5f1149856429a1568dc0701292, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2320,6 +2408,7 @@ SceneRoots:
   - {fileID: 891542513}
   - {fileID: 1154730403}
   - {fileID: 2144736139}
+  - {fileID: 1208443619}
   - {fileID: 1516285775}
   - {fileID: 653734391}
   - {fileID: 1756151390}

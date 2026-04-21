@@ -5,6 +5,7 @@ namespace StormPig.Crafting {
     public class CraftingStationData : ScriptableObject {
         [field: SerializeField] public string Name { get; private set; } = default;
         [field: SerializeField] public string Description { get; private set; } = default;
+        [field: SerializeField] public Sprite Icon { get; private set; } = default;
         [field: SerializeField] public RecipeRequirement StationRequirements { get; private set; } = default;
 
         [field: SerializeField] public ItemRecipe[] AvailableRecipes { get; private set; } = default;
