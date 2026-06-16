@@ -16,7 +16,7 @@ MonoBehaviour:
   <Description>k__BackingField: Standard refreshing dwarven ale. Common dwarf drink.
     They DO sell pints.
   <Weight>k__BackingField: 0.6
-  <Type>k__BackingField: 6
+  <Type>k__BackingField: 5
   <Quality>k__BackingField: 1
   <MaxStack>k__BackingField: 3
   <UIIcon>k__BackingField: {fileID: 21300000, guid: 0c0e2491595bd7447a0aeefb25a3140e, type: 3}

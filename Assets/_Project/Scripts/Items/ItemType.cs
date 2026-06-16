@@ -5,7 +5,6 @@ namespace StormPig.Items {
         Weapon,
         Rune,
         Food,
-        Drink,
-        Alcohol
+        Drink
     }
 }

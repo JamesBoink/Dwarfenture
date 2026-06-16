@@ -6,7 +6,7 @@ namespace StormPig.Items {
         [field: SerializeField] public string Name { get; private set; } = default;
         [field: SerializeField] public string Description { get; private set; } = default;
         [field: SerializeField] public float Weight { get; private set; } = default;
-        [field: SerializeField] public ItemType Type { get; private set; } = ItemType.Alcohol;
+        [field: SerializeField] public ItemType Type { get; private set; } = ItemType.Drink;
         [field: SerializeField] public ItemQuality Quality { get; private set; } = ItemQuality.Poor;
         [field: SerializeField] public int MaxStack { get; private set; } = 1;
         [field: SerializeField] public Sprite UIIcon { get; private set; } = default;
